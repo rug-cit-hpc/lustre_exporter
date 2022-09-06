@@ -7,7 +7,9 @@
 
 [Prometheus](https://prometheus.io/) exporter for [Lustre](https://www.lustre.org/) metrics.  
 
-Supported Lustre version is: 2.12.
+This exporter was tested successfully with Lustre version 2.12.5.
+
+It does not fully support Lustre versions below 2.12 and might work with higher versions.
 
 ## Getting
 

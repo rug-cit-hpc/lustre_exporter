@@ -1,5 +1,14 @@
 # Change Log
 
+## [v2.1.4](https://github.com/GSI-HPC/lustre_exporter/releases/tag/2.1.4) (2022-09-01)
+- Remove user check for root and sudo
+- Refactor lctl get\_param execution for changelog users
+- Export Jobstats for kworker [\#26](https://github.com/GSI-HPC/lustre_exporter/issues/26)
+- Add logging to file option
+- Add creation of prometheus log directory for systemd unit
+- Move remaning metrics for Lustre 2.12 from procfs to sysfs [\#7](https://github.com/GSI-HPC/lustre_exporter/issues/7)
+- Update loadSources() for returning multiple errors in a list
+
 ## [v2.1.3](https://github.com/GSI-HPC/lustre_exporter/releases/tag/2.1.3) (2022-01-24)
 - Add Docker build container
 - Remove depencency to Promu
