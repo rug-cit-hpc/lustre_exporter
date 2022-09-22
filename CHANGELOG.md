@@ -1,5 +1,9 @@
 # Change Log
 
+## [v2.1.5](https://github.com/GSI-HPC/lustre_exporter/releases/tag/2.1.5) (2022-09-22)
+- Add support for parentheses in jobids
+- Improve readability of regex for jobids
+
 ## [v2.1.4](https://github.com/GSI-HPC/lustre_exporter/releases/tag/2.1.4) (2022-09-01)
 - Remove user check for root and sudo
 - Refactor lctl get\_param execution for changelog users
