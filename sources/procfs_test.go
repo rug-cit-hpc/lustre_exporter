@@ -24,6 +24,7 @@ func TestGetJobNum(t *testing.T) {
 		"job_id: ABCD":                      "ABCD",
 		"job_id:  abc .0123 .-_+ AB.1000  ": "abc .0123 .-_+ AB.1000",
 		"job_id:            kworker/86:1.0": "kworker/86:1.0",
+		"job_id: (ostnamed.0)":              "(ostnamed.0)",
 	}
 
 	for testString, expected := range tests {
