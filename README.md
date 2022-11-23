@@ -5,7 +5,7 @@
 [![Build Status](https://travis-ci.org/HewlettPackard/lustre_exporter.svg?branch=master)](https://travis-ci.org/HewlettPackard/lustre_exporter)
 -->
 
-[Prometheus](https://prometheus.io/) exporter for [Lustre](https://www.lustre.org/) metrics.  
+[Prometheus](https://prometheus.io/) exporter for [Lustre](https://www.lustre.org/) metrics.
 
 This exporter was tested successfully with Lustre version 2.12.5.
 
@@ -19,18 +19,18 @@ Clone the repository.
 
 ### Exporter
 
-For just building the exporter:  
+For just building the exporter:
 `make build`
 
-Building the exporter with code testing, formatting and linting:  
+Building the exporter with code testing, formatting and linting:
 `make`
 
-Required for build with code linting:  
+Required for build with code linting:
 `go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest`
 
 ### RPM Package Build
 
-A CentOS7 RPM package can be build by using a 
+A CentOS7 RPM package can be build by using a
 1. Shell build script in `rpm/build.sh`
 2. Docker build container, see section below.
 
@@ -42,8 +42,8 @@ A Debian container is based on the offical golang:1.17.5-bullseye container imag
 
 ```shell
 # from repo base dir run
-docker build  --tag lustre_exporter -f docker/Dockerfile .
-docker run -v $PWD:/cpy -it lustre_exporter
+sudo docker build  --tag lustre_exporter -f docker/Dockerfile .
+sudo docker run -v $PWD:/cpy -it lustre_exporter
 ```
 The binary will be available in `build/lustre_exporter-X.X.X`.
 
@@ -53,8 +53,8 @@ A CentOS7 container is based on the official CentOS7 container image for providi
 
 ```shell
 # from repo base dir run
-docker build -t rpm_dock -f docker/RPM-Dockerfile .
-docker run -v $PWD:/rpm -it rpm_dock
+sudo docker build -t rpm_dock -f docker/RPM-Dockerfile .
+sudo docker run -v $PWD:/rpm -it rpm_dock
 ```
 The RPM package will be available in `build/x86_64/prometheus-lustre-exporter-X.X.X-X.X.el7.x86_64.rpm`.
 
