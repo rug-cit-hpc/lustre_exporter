@@ -56,7 +56,7 @@ A CentOS7 container is based on the official CentOS7 container image for providi
 sudo docker build -t rpm_dock -f docker/RPM-Dockerfile .
 sudo docker run -v $PWD:/rpm -it rpm_dock
 ```
-The RPM package will be available in `build/x86_64/prometheus-lustre-exporter-X.X.X-X.X.el7.x86_64.rpm`.
+The RPM package will be available in `build/x86_64/prometheus-lustre-exporter-X.X.X-1.0.el7.x86_64.rpm`.
 
 ## Running
 
