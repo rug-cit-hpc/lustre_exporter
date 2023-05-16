@@ -44,15 +44,15 @@ const (
 var LnetEnabled string
 
 func init() {
-	Factories["procsys"] = newLustreProcSysSource
+	Factories["sys"] = newLustreSysSource
 }
 
-type lustreProcSysSource struct {
+type lustreSysSource struct {
 	lustreProcMetrics []lustreProcMetric
 	basePath          string
 }
 
-func (s *lustreProcSysSource) generateLNETTemplates(filter string) {
+func (s *lustreSysSource) generateLNETTemplates(filter string) {
 	metricMap := map[string][]lustreHelpStruct{
 		"lnet": {
 			{"catastrophe", "catastrophe_enabled", "Returns 1 if currently in catastrophe mode", s.gaugeMetric, false, extended},
@@ -90,8 +90,8 @@ func (s *lustreProcSysSource) generateLNETTemplates(filter string) {
 	}
 }
 
-func newLustreProcSysSource() LustreSource {
-	var l lustreProcSysSource
+func newLustreSysSource() LustreSource {
+	var l lustreSysSource
 	l.basePath = filepath.Join(SysLocation, "kernel/debug")
 	if LnetEnabled != disabled {
 		l.generateLNETTemplates(LnetEnabled)
@@ -99,7 +99,7 @@ func newLustreProcSysSource() LustreSource {
 	return &l
 }
 
-func (s *lustreProcSysSource) Update(ch chan<- prometheus.Metric) (err error) {
+func (s *lustreSysSource) Update(ch chan<- prometheus.Metric) (err error) {
 	var metricType string
 
 	for _, metric := range s.lustreProcMetrics {
@@ -153,7 +153,7 @@ func parseSysStatsFile(helpText string, promName string, statsFile string) (metr
 	return *newLustreStatsMetric(promName, helpText, value, "", ""), nil
 }
 
-func (s *lustreProcSysSource) parseFile(nodeType string, metricType string, path string, helpText string, promName string, handler func(string, string, string, string, float64)) (err error) {
+func (s *lustreSysSource) parseFile(nodeType string, metricType string, path string, helpText string, promName string, handler func(string, string, string, string, float64)) (err error) {
 	_, nodeName, err := parseFileElements(path, 0)
 	if err != nil {
 		return err
@@ -184,7 +184,7 @@ func (s *lustreProcSysSource) parseFile(nodeType string, metricType string, path
 	return nil
 }
 
-func (s *lustreProcSysSource) counterMetric(labels []string, labelValues []string, name string, helpText string, value float64) prometheus.Metric {
+func (s *lustreSysSource) counterMetric(labels []string, labelValues []string, name string, helpText string, value float64) prometheus.Metric {
 	return prometheus.MustNewConstMetric(
 		prometheus.NewDesc(
 			prometheus.BuildFQName(Namespace, "", name),
@@ -198,7 +198,7 @@ func (s *lustreProcSysSource) counterMetric(labels []string, labelValues []strin
 	)
 }
 
-func (s *lustreProcSysSource) gaugeMetric(labels []string, labelValues []string, name string, helpText string, value float64) prometheus.Metric {
+func (s *lustreSysSource) gaugeMetric(labels []string, labelValues []string, name string, helpText string, value float64) prometheus.Metric {
 	return prometheus.MustNewConstMetric(
 		prometheus.NewDesc(
 			prometheus.BuildFQName(Namespace, "", name),

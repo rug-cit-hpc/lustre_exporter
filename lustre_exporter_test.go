@@ -1742,13 +1742,17 @@ func TestCollector(t *testing.T) {
 	for _, target := range targets {
 		toggleCollectors(target)
 		var missingMetrics []promType // Array of metrics that are missing for the given target
-		enabledSources := []string{"procfs", "procsys", "sysfs", "lctl"}
+		enabledSources := []string{"procfs", "sys", "sysfs", "lctl"}
 
 		sourceList, errList := loadSources(enabledSources)
 
 		if errList != nil {
+			for _, err := range errList {
+				t.Errorf("Couldn't load source: %s", err)
+			}
 			t.Fatal("Unable to load sources")
 		}
+
 		if err := prometheus.Register(LustreSource{sourceList: sourceList}); err != nil {
 			t.Fatalf("Failed to register for target: %s", target)
 		}
