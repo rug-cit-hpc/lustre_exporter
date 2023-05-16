@@ -34,15 +34,15 @@ var (
 )
 
 func init() {
-	Factories["sysfs"] = newLustreSysSource
+	Factories["sysfs"] = newLustreSysFsSource
 }
 
-type lustreSysSource struct {
+type LustreSysFsSource struct {
 	lustreProcMetrics []lustreProcMetric
 	basePath          string
 }
 
-func (s *lustreSysSource) generateHealthStatusTemplates(filter string) {
+func (s *LustreSysFsSource) generateHealthStatusTemplates(filter string) {
 	metricMap := map[string][]lustreHelpStruct{
 		"": {
 			{"health_check", "health_check", "Current health status for the indicated instance: " + healthCheckHealthy + " refers to 'healthy', " + healthCheckUnhealthy + " refers to 'unhealthy'", gaugeMetric, false, core},
@@ -58,7 +58,7 @@ func (s *lustreSysSource) generateHealthStatusTemplates(filter string) {
 	}
 }
 
-func (s *lustreSysSource) generateOSTMetricTemplates(filter string) {
+func (s *LustreSysFsSource) generateOSTMetricTemplates(filter string) {
 	metricMap := map[string][]lustreHelpStruct{
 		"obdfilter/*-OST*": {
 			{"degraded", "degraded", "Binary indicator as to whether or not the pool is degraded - 0 for not degraded, 1 for degraded", gaugeMetric, false, core},
@@ -89,8 +89,8 @@ func (s *lustreSysSource) generateOSTMetricTemplates(filter string) {
 	}
 }
 
-func newLustreSysSource() LustreSource {
-	var l lustreSysSource
+func newLustreSysFsSource() LustreSource {
+	var l LustreSysFsSource
 	l.basePath = filepath.Join(SysLocation, "fs/lustre")
 	if HealthStatusEnabled != disabled {
 		l.generateHealthStatusTemplates(HealthStatusEnabled)
@@ -101,7 +101,7 @@ func newLustreSysSource() LustreSource {
 	return &l
 }
 
-func (s *lustreSysSource) Update(ch chan<- prometheus.Metric) (err error) {
+func (s *LustreSysFsSource) Update(ch chan<- prometheus.Metric) (err error) {
 	var directoryDepth int
 
 	for _, metric := range s.lustreProcMetrics {
@@ -139,7 +139,7 @@ func (s *lustreSysSource) Update(ch chan<- prometheus.Metric) (err error) {
 	return nil
 }
 
-func (s *lustreSysSource) parseTextFile(nodeType string, metricType string, path string, directoryDepth int, helpText string, promName string, handler func(string, string, string, string, float64)) (err error) {
+func (s *LustreSysFsSource) parseTextFile(nodeType string, metricType string, path string, directoryDepth int, helpText string, promName string, handler func(string, string, string, string, float64)) (err error) {
 	filename, nodeName, err := parseFileElements(path, directoryDepth)
 	if err != nil {
 		return err
@@ -168,7 +168,7 @@ func (s *lustreSysSource) parseTextFile(nodeType string, metricType string, path
 	return nil
 }
 
-func (s *lustreSysSource) parseFile(nodeType string, metricType string, path string, directoryDepth int, helpText string, promName string, hasMultipleVals bool, handler func(string, string, string, string, float64, string, string)) (err error) {
+func (s *LustreSysFsSource) parseFile(nodeType string, metricType string, path string, directoryDepth int, helpText string, promName string, hasMultipleVals bool, handler func(string, string, string, string, float64, string, string)) (err error) {
 	_, nodeName, err := parseFileElements(path, directoryDepth)
 	if err != nil {
 		return err
