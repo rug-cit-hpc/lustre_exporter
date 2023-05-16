@@ -1,5 +1,9 @@
 # Change Log
 
+## [v2.1.6](https://github.com/GSI-HPC/lustre_exporter/releases/tag/2.1.6) (2023-05-16)
+- Provide LNET metrics for Lustre version 2.12[\#31](https://github.com/GSI-HPC/lustre_exporter/issues/31)
+- Update of RPM build script
+
 ## [v2.1.5](https://github.com/GSI-HPC/lustre_exporter/releases/tag/2.1.5) (2022-09-22)
 - Add support for parentheses in jobids
 - Improve readability of regex for jobids
