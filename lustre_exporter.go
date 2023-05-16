@@ -159,7 +159,7 @@ func main() {
 	sources.GenericEnabled = *genericEnabled
 	log.Infof(" - Generic State: %s", sources.GenericEnabled)
 	sources.LnetEnabled = *lnetEnabled
-	log.Infof(" - Lnet State: %s", sources.LnetEnabled)
+	log.Infof(" - LNET State: %s", sources.LnetEnabled)
 	sources.HealthStatusEnabled = *healthStatusEnabled
 	log.Infof(" - Health State: %s", sources.HealthStatusEnabled)
 
