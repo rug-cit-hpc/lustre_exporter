@@ -67,6 +67,7 @@ func gaugeMetric(labels []string, labelValues []string, name string, helpText st
 	)
 }
 
+//lint:ignore U1000 Ignore unused function for later use
 func untypedMetric(labels []string, labelValues []string, name string, helpText string, value float64) prometheus.Metric {
 	return prometheus.MustNewConstMetric(
 		prometheus.NewDesc(
