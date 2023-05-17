@@ -141,15 +141,12 @@ func (s *lustreLctlSource) createMDTChangelogUsersMetrics(lctlParam string) ([]p
 		data = string(out)
 
 	} else {
-		path := strings.ReplaceAll(lctlParam, ".", "/")
-		paths, err := filepath.Glob("lctl/" + path)
+		paramPath := strings.ReplaceAll(lctlParam, ".", "/")
+		path, err := filepath.Abs("lctl/" + paramPath)
 		if err != nil {
 			return nil, err
 		}
-		if paths == nil {
-			return nil, nil
-		}
-		out, err := ioutil.ReadFile(paths[0])
+		out, err := ioutil.ReadFile(path)
 		if err != nil {
 			return nil, err
 		}
