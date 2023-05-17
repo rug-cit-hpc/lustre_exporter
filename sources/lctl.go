@@ -141,7 +141,10 @@ func (s *lustreLctlSource) createMDTChangelogUsersMetrics(lctlParam string) ([]p
 		data = string(out)
 
 	} else {
+		TODO:
+		use path separator instead
 		paramPath := strings.ReplaceAll(lctlParam, ".", "/")
+		use `filepath.Join``
 		path, err := filepath.Abs("lctl/" + paramPath)
 		if err != nil {
 			return nil, err

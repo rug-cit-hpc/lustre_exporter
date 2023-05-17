@@ -14,6 +14,7 @@
 package sources
 
 import (
+	"fmt"
 	"io/ioutil"
 	"path/filepath"
 	"strconv"
@@ -103,12 +104,11 @@ func (s *lustreSysSource) Update(ch chan<- prometheus.Metric) (err error) {
 	var metricType string
 
 	for _, metric := range s.lustreProcMetrics {
+		TODO:
+		replase glob with `filepath.Abs`...
 		paths, err := filepath.Glob(filepath.Join(s.basePath, metric.path, metric.filename))
 		if err != nil {
 			return err
-		}
-		if paths == nil {
-			continue
 		}
 		for _, path := range paths {
 			metricType = single
