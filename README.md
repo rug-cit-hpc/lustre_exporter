@@ -9,7 +9,7 @@
 
 ## Version Support
 
-| Lustre Version | Exporter Tag | 
+| Lustre Version | Exporter Tag |
 | :------------: | :----------: |
 | 2.12           | v2.1.6       |
 
@@ -94,6 +94,16 @@ Flag Option Detailed Description
 - disabled - Completely disable all metrics for this portion of a source.
 - core - Enable this source, but only for metrics considered to be particularly useful.
 - extended - Enable this source and include all metrics that the Lustre Exporter is aware of within it.
+
+### Activating Expose of LNET Metrics for Systemd Service
+
+Since the LNET metrics are currently exposed based on the [DebugFS](https://docs.kernel.org/6.1/filesystems/debugfs.html) it is required to have root priviliges or mount DebugFS to be access by different user.
+
+As default the user `prometheus` is used in the Systemd service and LNET metrics are deactivated in the Systemd unit.
+
+To expose the LNET metrics by the exporter running as a Systemd service it must be configured as following:
+* Set `--collector.lnet=` to `core` or `extended` in the [options file](systemd/prometheus-lustre-exporter.options).
+* Replace `prometheus` with `root` user in the [service file](systemd/prometheus-lustre-exporter.service).
 
 ## What's exported?
 
