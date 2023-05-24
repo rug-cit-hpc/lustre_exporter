@@ -95,25 +95,21 @@ Flag Option Detailed Description
 - core - Enable this source, but only for metrics considered to be particularly useful.
 - extended - Enable this source and include all metrics that the Lustre Exporter is aware of within it.
 
-### Activating Expose of LNET Metrics for Systemd Service
-
-Since the LNET metrics are currently exposed based on the [DebugFS](https://docs.kernel.org/6.1/filesystems/debugfs.html) it is required to have root priviliges or mount DebugFS to be access by different user.
-
-As default the user `prometheus` is used in the Systemd service and LNET metrics are deactivated in the Systemd unit.
-
-To expose the LNET metrics by the exporter running as a Systemd service it must be configured as following:
-* Set `--collector.lnet=` to `core` or `extended` in the [options file](systemd/prometheus-lustre-exporter.options).
-* Replace `prometheus` with `root` user in the [service file](systemd/prometheus-lustre-exporter.service).
-
 ## What's exported?
 
 All Lustre procfs and procsys data from all nodes running the Lustre Exporter that we perceive as valuable data is exported or can be added to be exported (we don't have any known major gaps that anyone cares about, so if you see something missing, please file an issue!).
 
 See the issues tab for all known issues.
 
+### Exporting LNET Metrics
+
+Since the LNET metrics are currently exported based on the [DebugFS](https://docs.kernel.org/6.1/filesystems/debugfs.html) it is required to have root priviliges or mount DebugFS to be access by different user.
+
+To export that metrics running the exporter as Systemd service as `root` user, the default user option `prometheus` must be changed in the [service file](systemd/prometheus-lustre-exporter.service).
+
 ## Troubleshooting
 
-In the event that you encounter issues with specific metrics (especially on versions of Lustre older than 2.7), please try disabling those specific troublesome metrics using the documented collector flags in the 'disabled' or 'core' state. Users have encountered bugs within Lustre where specific sysfs and procfs files miscommunicate their sizes, causing read calls to fail.
+In the event that you encounter issues with specific metrics (especially on versions of Lustre older than 2.12), please try disabling those specific troublesome metrics using the documented collector flags in the 'disabled' or 'core' state. Users have encountered bugs within Lustre where specific sysfs and procfs files miscommunicate their sizes, causing read calls to fail.
 
 ## Contributing
 
