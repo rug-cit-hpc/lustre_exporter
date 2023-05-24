@@ -14,7 +14,6 @@
 package sources
 
 import (
-	"fmt"
 	"io/ioutil"
 	"path/filepath"
 	"strconv"
@@ -104,24 +103,23 @@ func (s *lustreSysSource) Update(ch chan<- prometheus.Metric) (err error) {
 	var metricType string
 
 	for _, metric := range s.lustreProcMetrics {
-		TODO:
-		replase glob with `filepath.Abs`...
-		paths, err := filepath.Glob(filepath.Join(s.basePath, metric.path, metric.filename))
+
+		path, err := filepath.Abs(filepath.Join(s.basePath, metric.path, metric.filename))
 		if err != nil {
 			return err
 		}
-		for _, path := range paths {
-			metricType = single
-			if metric.filename == stats {
-				metricType = stats
-			}
-			err = s.parseFile(metric.source, metricType, path, metric.helpText, metric.promName, func(nodeType string, nodeName string, name string, helpText string, value float64) {
-				ch <- metric.metricFunc([]string{"component", "target"}, []string{nodeType, nodeName}, name, helpText, value)
-			})
-			if err != nil {
-				return err
-			}
+
+		metricType = single
+		if metric.filename == stats {
+			metricType = stats
 		}
+		err = s.parseFile(metric.source, metricType, path, metric.helpText, metric.promName, func(nodeType string, nodeName string, name string, helpText string, value float64) {
+			ch <- metric.metricFunc([]string{"component", "target"}, []string{nodeType, nodeName}, name, helpText, value)
+		})
+		if err != nil {
+			return err
+		}
+
 	}
 	return nil
 }

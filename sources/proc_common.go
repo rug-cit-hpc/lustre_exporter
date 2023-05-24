@@ -16,6 +16,7 @@ package sources
 import (
 	"fmt"
 	"math"
+	"os"
 	"regexp"
 	"strconv"
 	"strings"
@@ -27,6 +28,10 @@ const (
 	core     string = "core"
 	extended string = "extended"
 	disabled string = "disabled"
+)
+
+const (
+	OSPathSeparator string = string(os.PathSeparator)
 )
 
 var (
