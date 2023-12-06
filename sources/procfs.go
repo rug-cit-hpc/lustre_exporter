@@ -112,74 +112,10 @@ type lustreProcFsSource struct {
 	basePath          string
 }
 
-func (s *lustreProcFsSource) generateOSTMetricTemplates(filter string) {
-	metricMap := map[string][]lustreHelpStruct{
-		"obdfilter/*-OST*": {
-			{"brw_size", "brw_size_megabytes", "Block read/write size in megabytes", gaugeMetric, false, extended},
-			{"grant_compat_disable", "grant_compat_disabled", "Binary indicator as to whether clients with OBD_CONNECT_GRANT_PARAM setting will be granted space", gaugeMetric, false, extended},
-			{"job_cleanup_interval", "job_cleanup_interval_seconds", "Interval in seconds between cleanup of tuning statistics", gaugeMetric, false, extended},
-			{"job_stats", "job_read_samples_total", readSamplesHelp, counterMetric, false, core},
-			{"job_stats", "job_read_minimum_size_bytes", readMinimumHelp, gaugeMetric, false, core},
-			{"job_stats", "job_read_maximum_size_bytes", readMaximumHelp, gaugeMetric, false, core},
-			{"job_stats", "job_read_bytes_total", readTotalHelp, counterMetric, false, core},
-			{"job_stats", "job_write_samples_total", writeSamplesHelp, counterMetric, false, core},
-			{"job_stats", "job_write_minimum_size_bytes", writeMinimumHelp, gaugeMetric, false, extended},
-			{"job_stats", "job_write_maximum_size_bytes", writeMaximumHelp, gaugeMetric, false, extended},
-			{"job_stats", "job_write_bytes_total", writeTotalHelp, counterMetric, false, core},
-			{"job_stats", "job_stats_total", jobStatsHelp, counterMetric, true, core},
-			{"num_exports", "exports_total", "Total number of times the pool has been exported", counterMetric, false, core},
-			{"recovery_time_hard", "recovery_time_hard_seconds", "Maximum timeout 'recover_time_soft' can increment to for a single server", gaugeMetric, false, extended},
-			{"recovery_time_soft", "recovery_time_soft_seconds", "Duration in seconds for a client to attempt to reconnect after a crash (automatically incremented if servers are still in an error state)", gaugeMetric, false, extended},
-			{"stats", "read_samples_total", readSamplesHelp, counterMetric, false, core},
-			{"stats", "read_minimum_size_bytes", readMinimumHelp, gaugeMetric, false, extended},
-			{"stats", "read_maximum_size_bytes", readMaximumHelp, gaugeMetric, false, extended},
-			{"stats", "read_bytes_total", readTotalHelp, counterMetric, false, core},
-			{"stats", "write_samples_total", writeSamplesHelp, counterMetric, false, core},
-			{"stats", "write_minimum_size_bytes", writeMinimumHelp, gaugeMetric, false, extended},
-			{"stats", "write_maximum_size_bytes", writeMaximumHelp, gaugeMetric, false, extended},
-			{"stats", "write_bytes_total", writeTotalHelp, counterMetric, false, core},
-			{"stats", "stats_total", statsHelp, counterMetric, true, core},
-			{"tot_dirty", "exports_dirty_total", "Total number of exports that have been marked dirty", counterMetric, false, core},
-			{"tot_granted", "exports_granted_total", "Total number of exports that have been marked granted", counterMetric, false, core},
-			{"tot_pending", "exports_pending_total", "Total number of exports that have been marked pending", counterMetric, false, core},
-		},
-		"osd-*/*-OST*": {
-			{"blocksize", "blocksize_bytes", "Filesystem block size in bytes", gaugeMetric, false, core},
-			{"brw_stats", "pages_per_bulk_rw_total", pagesPerBlockRWHelp, counterMetric, false, extended},
-			{"brw_stats", "discontiguous_pages_total", discontiguousPagesHelp, counterMetric, false, extended},
-			{"brw_stats", "disk_io", diskIOsInFlightHelp, gaugeMetric, false, core},
-			{"brw_stats", "io_time_milliseconds_total", ioTimeHelp, counterMetric, false, core},
-			{"brw_stats", "disk_io_total", diskIOSizeHelp, counterMetric, false, core},
-			{"filesfree", "inodes_free", "The number of inodes (objects) available", gaugeMetric, false, core},
-			{"filestotal", "inodes_maximum", "The maximum number of inodes (objects) the filesystem can hold", gaugeMetric, false, core},
-			{"kbytesfree", "free_kibibytes", "Number of kibibytes free in the pool", gaugeMetric, false, core},
-			{"kbytesavail", "available_kibibytes", "Number of kibibytes readily available in the pool", gaugeMetric, false, core},
-			{"kbytestotal", "capacity_kibibytes", "Capacity of the pool in kibibytes", gaugeMetric, false, core},
-		},
-	}
-	for path := range metricMap {
-		for _, item := range metricMap[path] {
-			if filter == extended || item.priorityLevel == core {
-				newMetric := newLustreProcMetric(item.filename, item.promName, "ost", path, item.helpText, item.hasMultipleVals, item.metricFunc)
-				s.lustreProcMetrics = append(s.lustreProcMetrics, *newMetric)
-			}
-		}
-	}
-}
-
 func (s *lustreProcFsSource) generateMDTMetricTemplates(filter string) {
 	metricMap := map[string][]lustreHelpStruct{
-		"osd-*/*-MDT*": {
-			{"blocksize", "blocksize_bytes", "Filesystem block size in bytes", gaugeMetric, false, core},
-			{"filesfree", "inodes_free", "The number of inodes (objects) available", gaugeMetric, false, core},
-			{"filestotal", "inodes_maximum", "The maximum number of inodes (objects) the filesystem can hold", gaugeMetric, false, core},
-			{"kbytesavail", "available_kibibytes", "Number of kibibytes readily available in the pool", gaugeMetric, false, core},
-			{"kbytesfree", "free_kibibytes", "Number of kibibytes free in the pool", gaugeMetric, false, core},
-			{"kbytestotal", "capacity_kibibytes", "Capacity of the pool in kibibytes", gaugeMetric, false, core},
-		},
 		"mdt/*": {
 			{mdStats, "stats_total", statsHelp, counterMetric, true, core},
-			{"num_exports", "exports_total", "Total number of times the pool has been exported", counterMetric, false, core},
 			{"job_stats", "job_stats_total", jobStatsHelp, counterMetric, true, core},
 		},
 	}
@@ -193,21 +129,42 @@ func (s *lustreProcFsSource) generateMDTMetricTemplates(filter string) {
 	}
 }
 
-func (s *lustreProcFsSource) generateMGSMetricTemplates(filter string) {
+
+func (s *lustreProcFsSource) generateOSTMetricTemplates(filter string) {
 	metricMap := map[string][]lustreHelpStruct{
-		"mgs/MGS/osd/": {
-			{"blocksize", "blocksize_bytes", "Filesystem block size in bytes", gaugeMetric, false, core},
-			{"filesfree", "inodes_free", "The number of inodes (objects) available", gaugeMetric, false, core},
-			{"filestotal", "inodes_maximum", "The maximum number of inodes (objects) the filesystem can hold", gaugeMetric, false, core},
-			{"kbytesavail", "available_kibibytes", "Number of kibibytes readily available in the pool", gaugeMetric, false, core},
-			{"kbytesfree", "free_kibibytes", "Number of kibibytes free in the pool", gaugeMetric, false, core},
-			{"kbytestotal", "capacity_kibibytes", "Capacity of the pool in kibibytes", gaugeMetric, false, core},
+		"obdfilter/*-OST*": {
+			{"brw_size", "brw_size_megabytes", "Block read/write size in megabytes", gaugeMetric, false, extended},
+			{"job_stats", "job_read_samples_total", readSamplesHelp, counterMetric, false, core},
+			{"job_stats", "job_read_minimum_size_bytes", readMinimumHelp, gaugeMetric, false, core},
+			{"job_stats", "job_read_maximum_size_bytes", readMaximumHelp, gaugeMetric, false, core},
+			{"job_stats", "job_read_bytes_total", readTotalHelp, counterMetric, false, core},
+			{"job_stats", "job_write_samples_total", writeSamplesHelp, counterMetric, false, core},
+			{"job_stats", "job_write_minimum_size_bytes", writeMinimumHelp, gaugeMetric, false, extended},
+			{"job_stats", "job_write_maximum_size_bytes", writeMaximumHelp, gaugeMetric, false, extended},
+			{"job_stats", "job_write_bytes_total", writeTotalHelp, counterMetric, false, core},
+			{"job_stats", "job_stats_total", jobStatsHelp, counterMetric, true, core},
+			{"stats", "read_samples_total", readSamplesHelp, counterMetric, false, core},
+			{"stats", "read_minimum_size_bytes", readMinimumHelp, gaugeMetric, false, extended},
+			{"stats", "read_maximum_size_bytes", readMaximumHelp, gaugeMetric, false, extended},
+			{"stats", "read_bytes_total", readTotalHelp, counterMetric, false, core},
+			{"stats", "write_samples_total", writeSamplesHelp, counterMetric, false, core},
+			{"stats", "write_minimum_size_bytes", writeMinimumHelp, gaugeMetric, false, extended},
+			{"stats", "write_maximum_size_bytes", writeMaximumHelp, gaugeMetric, false, extended},
+			{"stats", "write_bytes_total", writeTotalHelp, counterMetric, false, core},
+			{"stats", "stats_total", statsHelp, counterMetric, true, core},
+		},
+		"osd-*/*-OST*": {
+			{"brw_stats", "pages_per_bulk_rw_total", pagesPerBlockRWHelp, counterMetric, false, extended},
+			{"brw_stats", "discontiguous_pages_total", discontiguousPagesHelp, counterMetric, false, extended},
+			{"brw_stats", "disk_io", diskIOsInFlightHelp, gaugeMetric, false, core},
+			{"brw_stats", "io_time_milliseconds_total", ioTimeHelp, counterMetric, false, core},
+			{"brw_stats", "disk_io_total", diskIOSizeHelp, counterMetric, false, core},
 		},
 	}
 	for path := range metricMap {
 		for _, item := range metricMap[path] {
 			if filter == extended || item.priorityLevel == core {
-				newMetric := newLustreProcMetric(item.filename, item.promName, "mgs", path, item.helpText, item.hasMultipleVals, item.metricFunc)
+				newMetric := newLustreProcMetric(item.filename, item.promName, "ost", path, item.helpText, item.hasMultipleVals, item.metricFunc)
 				s.lustreProcMetrics = append(s.lustreProcMetrics, *newMetric)
 			}
 		}
@@ -228,33 +185,6 @@ func (s *lustreProcFsSource) generateMDSMetricTemplates(filter string) {
 
 func (s *lustreProcFsSource) generateClientMetricTemplates(filter string) {
 	metricMap := map[string][]lustreHelpStruct{
-		"llite/*": {
-			{"blocksize", "blocksize_bytes", "Filesystem block size in bytes", gaugeMetric, false, core},
-			{"checksum_pages", "checksum_pages_enabled", "Returns '1' if data checksumming is enabled for the client", gaugeMetric, false, extended},
-			{"default_easize", "default_ea_size_bytes", "Default Extended Attribute (EA) size in bytes", gaugeMetric, false, extended},
-			{"filesfree", "inodes_free", "The number of inodes (objects) available", gaugeMetric, false, core},
-			{"filestotal", "inodes_maximum", "The maximum number of inodes (objects) the filesystem can hold", gaugeMetric, false, core},
-			{"kbytesavail", "available_kibibytes", "Number of kibibytes readily available in the pool", gaugeMetric, false, core},
-			{"kbytesfree", "free_kibibytes", "Number of kibibytes free in the pool", gaugeMetric, false, core},
-			{"kbytestotal", "capacity_kibibytes", "Capacity of the pool in kibibytes", gaugeMetric, false, core},
-			{"lazystatfs", "lazystatfs_enabled", "Returns '1' if lazystatfs (a non-blocking alternative to statfs) is enabled for the client", gaugeMetric, false, extended},
-			{"max_easize", "maximum_ea_size_bytes", "Maximum Extended Attribute (EA) size in bytes", gaugeMetric, false, extended},
-			{"max_read_ahead_mb", "maximum_read_ahead_megabytes", "Maximum number of megabytes to read ahead", gaugeMetric, false, extended},
-			{"max_read_ahead_per_file_mb", "maximum_read_ahead_per_file_megabytes", "Maximum number of megabytes per file to read ahead", gaugeMetric, false, extended},
-			{"max_read_ahead_whole_mb", "maximum_read_ahead_whole_megabytes", "Maximum file size in megabytes for a file to be read in its entirety", gaugeMetric, false, extended},
-			{"statahead_agl", "statahead_agl_enabled", "Returns '1' if the Asynchronous Glimpse Lock (AGL) for statahead is enabled", gaugeMetric, false, extended},
-			{"statahead_max", "statahead_maximum", "Maximum window size for statahead", gaugeMetric, false, extended},
-			{"stats", "read_samples_total", readSamplesHelp, counterMetric, false, core},
-			{"stats", "read_minimum_size_bytes", readMinimumHelp, gaugeMetric, false, extended},
-			{"stats", "read_maximum_size_bytes", readMaximumHelp, gaugeMetric, false, extended},
-			{"stats", "read_bytes_total", readTotalHelp, counterMetric, false, core},
-			{"stats", "write_samples_total", writeSamplesHelp, counterMetric, false, core},
-			{"stats", "write_minimum_size_bytes", writeMinimumHelp, gaugeMetric, false, extended},
-			{"stats", "write_maximum_size_bytes", writeMaximumHelp, gaugeMetric, false, extended},
-			{"stats", "write_bytes_total", writeTotalHelp, counterMetric, false, core},
-			{"stats", "stats_total", statsHelp, counterMetric, true, core},
-			{"xattr_cache", "xattr_cache_enabled", "Returns '1' if extended attribute cache is enabled", gaugeMetric, false, extended},
-		},
 		"mdc/*": {
 			{"rpc_stats", "rpcs_in_flight", rpcsInFlightHelp, gaugeMetric, true, core},
 		},
@@ -277,6 +207,7 @@ func (s *lustreProcFsSource) generateClientMetricTemplates(filter string) {
 func (s *lustreProcFsSource) generateGenericMetricTemplates(filter string) {
 	metricMap := map[string][]lustreHelpStruct{
 		"sptlrpc": {
+			// is now in /sys/kernel/debug/lustre/sptlrpc/encrypt_page_pools
 			{"encrypt_page_pools", "physical_pages", physicalPagesHelp, gaugeMetric, false, extended},
 			{"encrypt_page_pools", "pages_per_pool", pagesPerPoolHelp, gaugeMetric, false, extended},
 			{"encrypt_page_pools", "maximum_pages", maxPagesHelp, gaugeMetric, false, extended},
@@ -311,12 +242,6 @@ func newLustreProcFsSource() LustreSource {
 	if OstEnabled != disabled {
 		l.generateOSTMetricTemplates(OstEnabled)
 	}
-	if MdtEnabled != disabled {
-		l.generateMDTMetricTemplates(MdtEnabled)
-	}
-	if MgsEnabled != disabled {
-		l.generateMGSMetricTemplates(MgsEnabled)
-	}
 	if MdsEnabled != disabled {
 		l.generateMDSMetricTemplates(MdsEnabled)
 	}
@@ -325,6 +250,9 @@ func newLustreProcFsSource() LustreSource {
 	}
 	if GenericEnabled != disabled {
 		l.generateGenericMetricTemplates(GenericEnabled)
+	}
+	if MdtEnabled != disabled {
+		l.generateMDTMetricTemplates(MdtEnabled)
 	}
 	return &l
 }
