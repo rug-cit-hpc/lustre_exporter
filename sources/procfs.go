@@ -75,10 +75,6 @@ const (
 var (
 	// OstEnabled specifies whether to collect OST metrics
 	OstEnabled string
-	// MdtEnabled specifies whether to collect MDT metrics
-	MdtEnabled string
-	// MgsEnabled specifies whether to collect MGS metrics
-	MgsEnabled string
 	// MdsEnabled specifies whether to collect MDS metrics
 	MdsEnabled string
 	// ClientEnabled specifies whether to collect Client metrics
